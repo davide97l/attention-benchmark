@@ -15,7 +15,7 @@ The goal of this repository is to benchmark the speed of different attention-XL 
 | Labmlai                     | **6.6384s**                       |
 | Sooftware (*)               | 6.4019s                           |
 
-**Note**: (*) means that the implementation doesn't include attention key, query, value, computation.
+**Note**: (*) means that the implementation doesn't include attention key, query, value computation.
 
 ## Run
 
