@@ -1,4 +1,6 @@
 # source: https://github.com/labmlai/annotated_deep_learning_paper_implementations/blob/master/labml_nn/transformers/xl/relative_mha.py
+# web: https://nn.labml.ai/transformers/xl/relative_mha.html
+# full model: https://github.com/labmlai/annotated_deep_learning_paper_implementations/blob/e75e53bb03bc3ab68ce61699c0fcf280d4cfb3d6/labml_nn/transformers/xl/__init__.py#L47
 
 """
 ---
@@ -15,8 +17,6 @@ in [PyTorch](https://pytorch.org).
 
 import torch
 from torch import nn
-
-from labml.logger import inspect
 from labml_nn.transformers.mha import MultiHeadAttention
 
 
@@ -124,21 +124,3 @@ class RelativeMultiHeadAttention(MultiHeadAttention):
         # \underset{\mathbf{\textcolor{lightgreen}{D}}}{\textcolor{orange}{S_{i-j}}}
         # $$
         return ac + bd
-
-
-def _test_shift_right():
-    x = torch.tensor([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-    inspect(x)
-    inspect(shift_right(x))
-
-    x = torch.arange(1, 6)[None, :, None, None].repeat(5, 1, 1, 1)
-    inspect(x[:, :, 0, 0])
-    inspect(shift_right(x)[:, :, 0, 0])
-
-    x = torch.arange(1, 6)[None, :, None, None].repeat(3, 1, 1, 1)
-    inspect(x[:, :, 0, 0])
-    inspect(shift_right(x)[:, :, 0, 0])
-
-
-if __name__ == '__main__':
-    _test_shift_right()
