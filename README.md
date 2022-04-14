@@ -8,14 +8,9 @@ The goal of this repository is to benchmark the speed of different attention-XL 
 
 ## Benchmark results
 
-| **Implementation**          | **Time for 10000 forward passes** |
-| --------------------------- | ----------------------------------|
-| DI-engine                   | **6.6984s**                       |
-| Huggingface                 | 7.4563s                           |
-| Labmlai                     | **6.6384s**                       |
-| Sooftware (*)               | 6.4019s                           |
-
-**Note**: (*) means that the implementation doesn't include attention key, query, value computation.
+<p align="center">
+    <img src="attention_xl/results.png" width=800>
+</p>
 
 ## Run
 
