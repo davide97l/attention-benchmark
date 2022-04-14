@@ -3,7 +3,7 @@ from attention_xl.sooftware_attention_xl import RelativeMultiHeadAttention as so
 from attention_xl.labmlai_attention_xl import RelativeMultiHeadAttention as labmlai_attention
 from attention_xl.huggingface_attention_xl import RelPartialLearnableMultiHeadAttn as huggingface_attention
 from attention_xl.labmlai_attention_xl_layer import TransformerXLLayer as labmlai_attention_layer
-from attention_xl.kimiyoung_attention_xl import RelMultiHeadAttn as kimiyoung_attention
+#from attention_xl.kimiyoung_attention_xl import RelMultiHeadAttn as kimiyoung_attention
 from easydict import EasyDict as edict
 import torch
 import timeit
@@ -97,7 +97,7 @@ def benchmark_labmlai_layer(hparams, iters=100, warmup=10, device='cuda'):
     return t1-t0
 
 
-def benchmark_kimiyoung(hparams, iters=100, warmup=10, device='cuda'):
+'''def benchmark_kimiyoung(hparams, iters=100, warmup=10, device='cuda'):
     x = torch.rand((hparams.seq_len, hparams.bs, hparams.dim_size))
     memory_input = torch.rand((hparams.seq_len+hparams.memory_len, hparams.bs, hparams.dim_size))
     pos_embedding = torch.rand(hparams.seq_len+hparams.memory_len, 1, hparams.dim_size)
@@ -114,88 +114,65 @@ def benchmark_kimiyoung(hparams, iters=100, warmup=10, device='cuda'):
             t0 = timeit.default_timer()
         out = attention.forward(*input, mems=memory_input)
     t1 = timeit.default_timer()
-    return t1-t0
+    return t1-t0'''
 
 
 if __name__ == "__main__":
     torch.manual_seed(0)
     random.seed(0)
     np.random.seed(0)
-    iterations = 10000
+    iterations = 100
     warmup_iter = 10
-    hparams = {  # config 1
+    hparams = [{  # config 1
         'input_dim': 32, 'dim_size': 128, 'seq_len': 64, 'bs': 32, 'memory_len': 64, 'head_num': 2, 'head_dim': 64,
-    }
-    hparams = {  #config 2
-            'input_dim': 64, 'dim_size': 512, 'seq_len': 256, 'bs': 32, 'memory_len': 256, 'head_num': 8, 'head_dim': 64,
-    }
-    hparams = {  #config 3
-            'input_dim': 32, 'dim_size': 256, 'seq_len': 128, 'bs': 16, 'memory_len': 128, 'head_num': 8, 'head_dim': 32,
-    }
-    hparams = {  # config 4
-        'input_dim': 32, 'dim_size': 256, 'seq_len': 128, 'bs': 16, 'memory_len': 512, 'head_num': 8, 'head_dim': 32,
-    }
-    hparams = {  # config 5
-        'input_dim': 32, 'dim_size': 256, 'seq_len': 128, 'bs': 16, 'memory_len': 32, 'head_num': 8, 'head_dim': 32,
-    }
-    hparams = {  # config 6
-        'input_dim': 64, 'dim_size': 128, 'seq_len': 256, 'bs': 32, 'memory_len': 32, 'head_num': 8, 'head_dim': 64,
-    }
-    hparams = edict(hparams)
+    },
+    {  #config 2
+        'input_dim': 512, 'dim_size': 128, 'seq_len': 64, 'bs': 32, 'memory_len': 64, 'head_num': 2, 'head_dim': 64,
+    },
+    {  #config 3
+        'input_dim': 32, 'dim_size': 1024, 'seq_len': 64, 'bs': 32, 'memory_len': 64, 'head_num': 2, 'head_dim': 64,
+    },
+    {  # config 4
+        'input_dim': 32, 'dim_size': 128, 'seq_len': 512, 'bs': 32, 'memory_len': 64, 'head_num': 2, 'head_dim': 64,
+    },
+    {  # config 5
+        'input_dim': 32, 'dim_size': 128, 'seq_len': 64, 'bs': 512, 'memory_len': 64, 'head_num': 2, 'head_dim': 64,
+    },
+    {  # config 6
+        'input_dim': 32, 'dim_size': 128, 'seq_len': 64, 'bs': 32, 'memory_len': 512, 'head_num': 2, 'head_dim': 64,
+    },
+    {  # config 7
+        'input_dim': 32, 'dim_size': 128, 'seq_len': 64, 'bs': 32, 'memory_len': 64, 'head_num': 32, 'head_dim': 64,
+    },
+    {  # config 8
+        'input_dim': 32, 'dim_size': 128, 'seq_len': 64, 'bs': 32, 'memory_len': 64, 'head_num': 2, 'head_dim': 512,
+    },
+    {  # config 9
+        'input_dim': 32, 'dim_size': 128, 'seq_len': 512, 'bs': 32, 'memory_len': 512, 'head_num': 2, 'head_dim': 64,
+    },
+    {  # config 10
+        'input_dim': 512, 'dim_size': 1024, 'seq_len': 512, 'bs': 32, 'memory_len': 512, 'head_num': 32, 'head_dim': 512,
+    }]
+    hparams_ = [edict(hp) for hp in hparams]
     device = ['cuda']
 
     for d in device:
+        print(d)
+        for hparams in hparams_:
+            print(hparams)
 
-        t = benchmark_diengine(hparams, iters=iterations)
-        print('{} iterations of diengine attention-XL took {}'.format(iterations, t))
+            t = benchmark_diengine(hparams, iters=iterations, device=d)
+            print('{} iterations of diengine attention-XL took {}'.format(iterations, t))
 
-        # query and value given as input (full layer not provided)
-        t = benchmark_sooftware(hparams, iters=iterations)
-        print('{} iterations of sooftware attention-XL took {}'.format(iterations, t))
+            # query and value given as input (full layer not provided)
+            #t = benchmark_sooftware(hparams, iters=iterations, device=d)
+            #print('{} iterations of sooftware attention-XL took {}'.format(iterations, t))
 
-        t = benchmark_labmlai_layer(hparams, iters=iterations)
-        print('{} iterations of labmlai attention-XL layer took {}'.format(iterations, t))
+            t = benchmark_labmlai_layer(hparams, iters=iterations, device=d)
+            print('{} iterations of labmlai attention-XL layer took {}'.format(iterations, t))
 
-        t = benchmark_huggingface(hparams, iters=iterations)
-        print('{} iterations of huggingface attention-XL took {}'.format(iterations, t))
+            t = benchmark_huggingface(hparams, iters=iterations, device=d)
+            print('{} iterations of huggingface attention-XL took {}'.format(iterations, t))
 
-        t = benchmark_kimiyoung(hparams, iters=iterations)  # TODO
-        print('{} iterations of kimiyoung attention-XL took {}'.format(iterations, t))
-
-'''
-With Config 1
-10000 iterations of diengine attention-XL took 7.104594364762306
-10000 iterations of sooftware attention-XL took 5.660833878442645
-10000 iterations of labmlai attention-XL layer took 6.577764593064785
-10000 iterations of huggingface attention-XL took 8.679865637794137
-
-With Config 2
-10000 iterations of diengine attention-XL took 116.04233813472092
-10000 iterations of sooftware attention-XL took 19.739588052034378
-10000 iterations of labmlai attention-XL layer took 78.6180883999914
-10000 iterations of huggingface attention-XL took 88.0046330485493
-
-With Config 3
-10000 iterations of diengine attention-XL took 10.007909368723631
-10000 iterations of sooftware attention-XL took 5.6802773885428905
-10000 iterations of labmlai attention-XL layer took 18.371496737003326
-10000 iterations of huggingface attention-XL took 20.544360239058733
-
-Config 4
-10000 iterations of diengine attention-XL took 118.39644432067871
-10000 iterations of sooftware attention-XL took 5.69793008454144
-10000 iterations of labmlai attention-XL layer took 46.035963932052255
-10000 iterations of huggingface attention-XL took 52.99771159514785
-
-Config 5
-10000 iterations of diengine attention-XL took 8.25664977915585
-10000 iterations of sooftware attention-XL took 5.702447298914194
-10000 iterations of labmlai attention-XL layer took 11.381201213225722
-10000 iterations of huggingface attention-XL took 13.155700173228979
-
-Config 6
-10000 iterations of diengine attention-XL took 122.76194015517831
-10000 iterations of sooftware attention-XL took 12.330126008018851
-10000 iterations of labmlai attention-XL layer took 36.337707720696926
-10000 iterations of huggingface attention-XL took 38.621776254847646
-'''
+            #t = benchmark_kimiyoung(hparams, iters=iterations, device=d)  # TODO
+            #print('{} iterations of kimiyoung attention-XL took {}'.format(iterations, t))
