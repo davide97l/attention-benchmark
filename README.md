@@ -9,7 +9,7 @@ The goal of this repository is to benchmark the speed of different attention-XL 
 ## Benchmark results
 
 <p align="center">
-    <img src="attention_xl/results.png" width=800>
+    <img src="attention_xl/result.png" width=800>
 </p>
 
 ## Run
